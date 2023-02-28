@@ -12,7 +12,6 @@ async function createPost(post, supabase) {
       .from("posts-covers")
       .upload(newName, post.photo.imageFile)
 
-    //   console.log(response)
     if (response.error) {
       throw response.error
     } else {
@@ -22,8 +21,6 @@ async function createPost(post, supabase) {
         "/storage/v1/object/public/posts-covers/" +
         imageName
     }
-    //   console.log("imageURL", imageURL)
-    //   console.log("imageName", imageName)
   }
 
   const newPost = {

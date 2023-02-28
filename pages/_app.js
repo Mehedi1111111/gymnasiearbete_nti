@@ -23,6 +23,7 @@ const queryClientOptions = {
 export default function App({ Component, pageProps }) {
   const [supabaseClient] = useState(() => createBrowserSupabaseClient())
   const [queryClient] = useState(() => new QueryClient(queryClientOptions))
+  // const [queryClient] = useState(() => new QueryClient())
 
   return (
     <SessionContextProvider

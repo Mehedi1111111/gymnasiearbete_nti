@@ -1,13 +1,16 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
+import { useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import Avatar from "./Avatar"
 
 export default function NavBar({ user }) {
   const supabase = useSupabaseClient()
+  const queryClient = useQueryClient()
 
   async function signOut() {
     const response = await supabase.auth.signOut()
-    window.location.href = "/"
+    // window.location.href = "/"
+    queryClient.removeQueries()
     console.log(response)
   }
 

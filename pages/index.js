@@ -3,13 +3,18 @@ import Head from "next/head"
 import News from "../components/News"
 import CreatePost from "../components/CreatePost"
 import Post from "../components/Post"
-import { useSupabaseClient } from "@supabase/auth-helpers-react"
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
-import { QueryClient, useQuery } from "@tanstack/react-query"
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query"
 import NoPost from "../components/NoPost"
+import EditPost from "../components/EditPost"
 
-async function getProfile(supabase) {
-  const { data } = await supabase.from("profiles").select("*").single()
+async function getProfile(supabase, userID) {
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userID)
+    .single()
   return data
 }
 
@@ -23,16 +28,28 @@ async function getPosts(supabase) {
 
 export default function Home() {
   const supabaseClient = useSupabaseClient()
+  const queryClient = useQueryClient()
+
+  const user = useUser()
+
+  console.log("client", user)
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
-    queryFn: () => getProfile(supabaseClient),
+    queryFn: () => getProfile(supabaseClient, user?.id),
+    enabled: !!user,
   })
 
   const { data: allPosts } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getPosts(supabaseClient),
     enabled: !!profile,
+  })
+
+  const { data: editPost } = useQuery({
+    queryKey: ["currentPost"],
+    queryFn: () => queryClient.getQueryData(["currentPost"]),
+    initialData: null,
   })
 
   console.log("query-user:", profile)
@@ -47,6 +64,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {editPost && <EditPost post={editPost} />}
+
       <main className="w-screen min-h-screen bg-white">
         <NavBar user={profile} />
         <section className="w-full bg-white">
@@ -55,10 +74,12 @@ export default function Home() {
               {profile ? (
                 <>
                   <CreatePost user={profile} supabase={supabaseClient} />
-                  {allPosts ? (
-                    allPosts.map((p) => <Post key={p.id} post={p} />)
+                  {allPosts && allPosts.length ? (
+                    allPosts.map((p) => (
+                      <Post key={p.id} post={p} user={profile} />
+                    ))
                   ) : (
-                    <h1>Loading...</h1>
+                    <NoPost />
                   )}
                 </>
               ) : (
@@ -79,10 +100,18 @@ export const getServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient(ctx)
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery(["profile"], () => getProfile(supabase))
-  await queryClient.prefetchQuery(["posts"], () => getPosts(supabase))
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user) {
+    await queryClient.prefetchQuery(["profile"], () =>
+      getProfile(supabase, user.id)
+    )
+    await queryClient.prefetchQuery(["posts"], () => getPosts(supabase))
+  }
 
   return {
-    props: {},
+    props: { user: user || null },
   }
 }

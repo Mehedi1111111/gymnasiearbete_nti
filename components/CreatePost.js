@@ -42,11 +42,7 @@ export default function CreatePost({ user, supabase }) {
       </h5>
 
       <div className="flex items-start gap-3">
-        <Avatar
-          imgSrc={
-            "https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-          }
-        />
+        <Avatar imgSrc={user.avatar} />
 
         <form className="flex-1">
           <textarea
