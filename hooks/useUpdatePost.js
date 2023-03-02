@@ -11,6 +11,7 @@ async function updatePost(oldPost, newPost, supabase) {
   console.log("newPost", newPost)
 
   if (newPost.photo && newPost.photo.name && oldPost.imageName) {
+    //* old image exits, however user updated the post with a new image
     const newName = Date.now() + newPost.photo.name
     const { error: deleteError } = await supabase.storage
       .from("posts-covers")
@@ -24,11 +25,13 @@ async function updatePost(oldPost, newPost, supabase) {
       .from("posts-covers")
       .upload(newName, newPost.photo.imageFile)
   } else if (newPost.photo && newPost.photo.name && !oldPost.imageName) {
+    //* old image doesn't exits, however user updated the post with a new image
     const newName = Date.now() + newPost.photo.name
     response = await supabase.storage
       .from("posts-covers")
       .upload(newName, newPost.photo.imageFile)
   } else if (!newPost.photo && !newPost.photo?.name && oldPost.imageName) {
+    //* old image exists, however user removed the image from the post while updating it.
     const { error: deleteError } = await supabase.storage
       .from("posts-covers")
       .remove([oldPost.imageName])

@@ -60,7 +60,9 @@ export default function EditPost({ post }) {
           <div className="relative w-full h-72">
             <button
               onClick={() => setPhoto(null)}
-              className="py-1.5 px-3 text-lg font-semibold text-white bg-red-600 absolute top-0 left-1/2 -translate-x-1/2 z-10"
+              className={`${
+                isLoading ? "pointer-events-none" : "pointer-events-auto"
+              } py-1.5 px-3 text-lg font-semibold text-white bg-red-600 absolute top-0 left-1/2 -translate-x-1/2 z-10`}
             >
               Remove Image
             </button>
@@ -92,7 +94,9 @@ export default function EditPost({ post }) {
           <div className="flex gap-4">
             <button
               onClick={goBack}
-              className="py-1.5 px-3 text-lg font-semibold text-white bg-red-600"
+              className={`${
+                isLoading ? "pointer-events-none" : "pointer-events-auto"
+              } py-1.5 px-3 text-lg font-semibold text-white bg-red-600`}
             >
               Cancel
             </button>

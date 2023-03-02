@@ -1,3 +1,4 @@
+import useGetComments from "../hooks/useGetComments"
 import { useQueryClient } from "@tanstack/react-query"
 import useDeletePost from "../hooks/useDeletePost"
 import Avatar from "./Avatar"
@@ -16,6 +17,7 @@ function formatDate(myDate) {
 
 export default function Post({ post, user }) {
   const { mutate: deletePost, isLoading: deleteLoading } = useDeletePost()
+  const { data: comments } = useGetComments({ postID: post.id })
   const queryClient = useQueryClient()
 
   async function postDelete() {
@@ -76,12 +78,16 @@ export default function Post({ post, user }) {
         )}
 
         <div className="flex items-center justify-end pt-4 pb-1 space-x-4 text-xs font-medium text-gray-400 border-0 border-b-2 border-gray-100 border-solid">
-          <span>0 Comments</span>
+          <span>{comments ? comments.length : 0} Comments</span>
         </div>
       </div>
 
-      <CreateComment />
-      <Comment />
+      <CreateComment user={user} post={post} />
+      {comments && comments.length
+        ? comments.map((c) => (
+            <Comment key={c.id} comment={c} user={user} post={post} />
+          ))
+        : null}
     </article>
   )
 }
