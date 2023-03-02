@@ -1,19 +1,24 @@
+import useUpdatePost from "../hooks/useUpdatePost"
 import { useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
 import { useRef, useState } from "react"
 import { BiImageAlt } from "react-icons/bi"
 
-const isLoading = false
-
 export default function EditPost({ post }) {
   const queryClient = useQueryClient()
   const [content, setContent] = useState(post.content || "")
-  const [photo, setPhoto] = useState({
-    name: null,
-    url: post.imageURL,
-    imageFile: null,
-  })
+  const [photo, setPhoto] = useState(
+    post.imageURL
+      ? {
+          name: null,
+          url: post.imageURL,
+          imageFile: null,
+        }
+      : null
+  )
   const photoFileRef = useRef(null)
+
+  const { mutate: updatePost, isLoading } = useUpdatePost()
 
   // ! get temporary image url
   function handleImageChange(file) {
@@ -30,9 +35,15 @@ export default function EditPost({ post }) {
     )
   }
 
-  async function postUpdate(e) {
+  function postUpdate(e) {
     e.preventDefault()
     if (!content && !photo) return
+    updatePost({ oldPost: post, newPost: { content, photo } })
+  }
+
+  function goBack(e) {
+    e.preventDefault()
+    queryClient.setQueryData(["currentPost"], null)
   }
 
   return (
@@ -47,6 +58,12 @@ export default function EditPost({ post }) {
         />
         {photo?.url && (
           <div className="relative w-full h-72">
+            <button
+              onClick={() => setPhoto(null)}
+              className="py-1.5 px-3 text-lg font-semibold text-white bg-red-600 absolute top-0 left-1/2 -translate-x-1/2 z-10"
+            >
+              Remove Image
+            </button>
             <Image
               src={photo.url}
               alt="tweet cover"
@@ -74,7 +91,7 @@ export default function EditPost({ post }) {
           </div>
           <div className="flex gap-4">
             <button
-              onClick={() => queryClient.setQueryData(["currentPost"], null)}
+              onClick={goBack}
               className="py-1.5 px-3 text-lg font-semibold text-white bg-red-600"
             >
               Cancel

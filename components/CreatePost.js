@@ -29,14 +29,14 @@ export default function CreatePost({ user, supabase }) {
     )
   }
 
-  async function postCreate(e) {
+  function postCreate(e) {
     e.preventDefault()
     if (!content && !photo) return
     createPost({ user_id: user.id, photo, content })
   }
 
   return (
-    <div className="bg-white border-2 border-gray-200 border-solid rounded-xl py-2.5 px-6">
+    <div className="bg-white border-2 border-gray-200 border-solid rounded-xl py-2.5 px-6 mb-4">
       <h5 className="pb-1 mb-3 text-lg font-bold tracking-tight text-gray-900 border-0 border-b-2 border-gray-200 border-solid dark:text-white">
         Post something
       </h5>
