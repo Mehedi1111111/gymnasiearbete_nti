@@ -69,8 +69,8 @@ export default function Home() {
       <main className="w-screen min-h-screen bg-white">
         <NavBar user={profile} />
         <section className="w-full bg-white">
-          <div className="px-3 pb-4 wrapper w-[82rem] mx-auto grid grid-cols-4 gap-6">
-            <article className="col-span-3">
+          <div className="px-3 pb-4 wrapper w-[82rem] mx-auto md:grid md:grid-cols-4 gap-6 flex max-w-full flex-col-reverse">
+            <article className="md:col-span-3">
               {profile ? (
                 <>
                   <CreatePost user={profile} supabase={supabaseClient} />
@@ -86,7 +86,7 @@ export default function Home() {
                 <NoPost />
               )}
             </article>
-            <aside className="col-span-1">
+            <aside className="space-y-6 md:col-span-1">
               <News />
             </aside>
           </div>

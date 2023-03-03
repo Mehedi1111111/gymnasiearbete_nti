@@ -27,7 +27,7 @@ export default function Post({ post, user }) {
   return (
     <article className="max-w-full p-4 mt-8 bg-white border-2 border-gray-200 border-solid rounded-lg shadow-md">
       <div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap">
           <div className="flex items-center gap-4">
             <Avatar imgSrc={post.profiles?.avatar} />
             <div>
@@ -46,7 +46,7 @@ export default function Post({ post, user }) {
             <div
               className={`${
                 deleteLoading ? "pointer-events-none" : "pointer-events-auto"
-              } flex items-center gap-3`}
+              } flex items-center gap-3 sm:mt-0 mt-3`}
             >
               <button
                 onClick={postDelete}

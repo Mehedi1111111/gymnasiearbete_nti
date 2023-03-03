@@ -16,7 +16,7 @@ export default function NavBar({ user }) {
 
   return (
     <nav className="w-full mb-4 bg-white shadow-lg">
-      <div className="px-3 py-4 wrapper w-[82rem] mx-auto flex items-center justify-between">
+      <div className="px-3 py-4 wrapper max-w-[82rem] mx-auto flex items-center justify-between">
         <h1 className="text-2xl font-bold text-blue-600">Flames</h1>
         <div className="flex items-center gap-3">
           {user ? (
